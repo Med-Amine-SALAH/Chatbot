@@ -1,0 +1,48 @@
+{
+  "intents": 
+  [
+    
+    {
+      "tag": "erreur",
+      "patterns": [""],
+      "responses": ["je m'excuse, je n'ai pas compris votre reponse. Veuillez reformuler votre phrase."]
+    },
+
+    {
+      "tag": "greeting",
+      "patterns": ["salut", "Bonjour","slt", "bjr"],
+      "responses": ["Salut! Comment puis-je vous aider?", "Bonjour ! Comment puis-je vous aider?"]
+    },
+
+    {
+      "tag": "recharge_amount",
+      "patterns": ["montant de recharge", "valeur de recharge","montant", "montant recharge"],
+      "responses": ["Le montant de recharge est"]
+    },
+
+    {
+      "tag": "number_of_clients",
+      "patterns": [ "nombre de clients", "nbr clients"],
+      "responses": ["Le nombre de clients est"]
+    },
+
+    {
+      "tag": "base active",
+      "patterns": ["la base d'activation", "BA", "base active"],
+      "responses": ["BA est:","la base d'activation:"]
+    },
+
+    {
+      "tag": "goodbye",
+      "patterns": ["Au-revoir", "See you later", "Take care", "au revoir"],
+      "responses": ["Au revoir!", "A bientot!", "Prenez soin de vous!"]
+    },
+
+    {
+      "tag": "remerciement",
+      "patterns": ["Thank you", "Thanks", "Appreciate it", "merci", "cordialement"],
+      "responses": ["De rien!", "A tout moment!", "De rien ! Je suis la pour vous aider. "]
+    }
+
+  ]
+}
