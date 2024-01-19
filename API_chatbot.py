@@ -12,11 +12,14 @@ import re
 import calendar
 import json
 import random
+import os
 
 app = Flask(__name__)
 
-nltk.download("punkt")
-nltk.download("wordnet")
+nltk_data_path = "/opt/render/nltk_data"
+nltk.data.path.append(nltk_data_path)
+nltk.download("punkt", download_dir=nltk_data_path)
+nltk.download("wordnet", download_dir=nltk_data_path)
 
 model = load_model('chatbot_model2.h5')
 words = pickle.load(open('words2.pkl', 'rb'))
