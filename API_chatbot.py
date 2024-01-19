@@ -12,6 +12,7 @@ import re
 import calendar
 import json
 import random
+import requests
 
 app = Flask(__name__)
 
@@ -22,8 +23,13 @@ model = load_model('chatbot_model2.h5')
 words = pickle.load(open('words2.pkl', 'rb'))
 classes = pickle.load(open('classes2.pkl', 'rb'))
 
-with open('intents2.json', 'r') as file:
-    intention = json.load(file)
+url = 'https://raw.githubusercontent.com/Med-Amine-SALAH/Chatbot/main/intents2.json'
+response = requests.get(url)
+if response.status_code == 200:
+    intention = response.json()
+else:
+    print(f"Failed to fetch intents file. Status Code: {response.status_code}")
+    intention = {}
 
 df_responses = pd.read_csv('reponses.csv')
 lemmatizer = WordNetLemmatizer()
