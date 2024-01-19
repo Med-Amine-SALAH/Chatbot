@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-import tensorflow as tf
 from keras.models import load_model
+import tensorflow as tf
 import pandas as pd
 import numpy as np
 import pickle
