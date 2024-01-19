@@ -23,7 +23,7 @@ model = load_model('chatbot_model2.h5')
 words = pickle.load(open('words2.pkl', 'rb'))
 classes = pickle.load(open('classes2.pkl', 'rb'))
 
-url = 'https://raw.githubusercontent.com/Med-Amine-SALAH/Chatbot/main/intents2.json'
+url = 'https://github.com/Med-Amine-SALAH/Chatbot/blob/1f7318a5529333a176f63b377b30732a68ef4aa9/intents2.JSON'
 response = requests.get(url)
 if response.status_code == 200:
     intention = response.json()
