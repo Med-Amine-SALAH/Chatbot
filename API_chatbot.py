@@ -233,6 +233,10 @@ def process_message(msg, transformed_date):
     if intents[0] == "erreur":
         save_user_message(msg)
 
+@app.route('/')
+def index():
+    return 'Web App with Python Flask!'
+
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot():
     try:
