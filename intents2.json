@@ -10,31 +10,31 @@
 
     {
       "tag": "greeting",
-      "patterns": ["salut", "Bonjour","slt", "bjr"],
+      "patterns": ["salut", "Bonjour", "slt", "bjr", "Hello", "Hi", "Good Morning", "Hola"],
       "responses": ["Salut! Comment puis-je vous aider?", "Bonjour ! Comment puis-je vous aider?"]
     },
 
     {
       "tag": "recharge_amount",
-      "patterns": ["montant de recharge", "valeur de recharge","montant", "montant recharge"],
+      "patterns": ["montant de recharge", "valeur de recharge","montant", "montant recharge","refill","refill value","recharge"],
       "responses": ["Le montant de recharge est"]
     },
 
     {
       "tag": "number_of_clients",
-      "patterns": [ "nombre de clients", "nbr clients"],
+      "patterns": [ "nombre de clients", "nbr clients","clients"],
       "responses": ["Le nombre de clients est"]
     },
 
     {
       "tag": "base active",
-      "patterns": ["la base d'activation", "BA", "base active"],
+      "patterns": ["la base d'activation", "BA", "base active","ba","base act"],
       "responses": ["BA est:","la base d'activation:"]
     },
-
+  
     {
       "tag": "goodbye",
-      "patterns": ["Au-revoir", "See you later", "Take care", "au revoir"],
+      "patterns": ["Au-revoir", "See you later", "Take care", "au revoir","bye"],
       "responses": ["Au revoir!", "A bientot!", "Prenez soin de vous!"]
     },
 

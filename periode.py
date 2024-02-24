@@ -121,13 +121,15 @@ def extract_date(text):
                 day, month, year = date.split()
                 day = day.lstrip('0')
                 month = month.lower()
-
+               
                 if month == 'mois dernier':
-                    d = datetime.now() - timedelta(days=30)
-                    transformed_date = d.strftime("%d/%m/%Y")
+                     d = datetime.now() - timedelta(days=30)
+                     transformed_date = d.strftime("%d/%m/%Y")
                 elif month in ['semaine dernière', 'semaine derniere']:
                     d = datetime.now() - timedelta(days=7)
                     transformed_date = d.strftime("%d/%m/%Y")
+                
+                
                 else:
                     most_similar_month = find_similar_month(month)  # Obtenir le mois le plus similaire
                     month = month_mapping.get(most_similar_month, month)
@@ -246,24 +248,62 @@ def show_greeting():
     ChatBox.insert(tk.END, " ------ Bienvenue au service Orange -------\n")
     ChatBox.config(state=tk.DISABLED)
 
+# Add a global variable to track pending intent and user input
+pending_intent = ""
+pending_user_input = ""
+
+# Function to process pending user input and intent when a date is provided
+def process_pending_input_and_intent(date):
+    global pending_user_input, pending_intent
+    if pending_user_input and pending_intent:
+        # Process the pending input and intent
+        process_message(pending_user_input, date)
+        # Clear pending input and intent after processing
+        pending_user_input, pending_intent = "", ""
+
+# Function to handle user input
+def handle_user_input_and_special_cases(msg):
+    global pending_user_input, pending_intent
+    transformed_date = extract_date(msg)
+
+    # Check if the user entered an intent without a date
+    if any(tag in msg.lower() for tag in ["recharge", "refill", "clients", "ba"]):
+        if not transformed_date:
+            if 'j-1' in msg.lower() or 'hier' in msg.lower() or 'hie' in msg.lower() or 'ier' in msg.lower() or 'her' in msg.lower():
+                # If the user entered a date-related keyword, infer the date as the previous day
+                d = datetime.now() - timedelta(days=1)
+                transformed_date = format_date(d.strftime("%d/%m/%Y"))
+            elif 'aujourd\'hui' in msg.lower() or 'aujourd hui' in msg.lower() or 'aujoud hui' in msg.lower() or 'aujord hui' in msg.lower() or 'ajourd hui' in msg.lower():
+               transformed_date = format_date(datetime.now().strftime("%d/%m/%Y"))     
+            
+              
+            else:
+                # Save the user input and intent as pending
+                pending_user_input = msg
+                pending_intent = [tag for tag in ["recharge", "refill", "clients", "ba"] if tag in msg.lower()][0]
+                ChatBox.config(state=tk.NORMAL)
+                ChatBox.insert(tk.END, "You: " + msg + "\n")  # Display the original message
+                ChatBox.insert(tk.END, f"Bot: Please provide a date for the previous query ({pending_intent}).\n")
+                ChatBox.config(state=tk.DISABLED)
+        else:
+            process_pending_input_and_intent(transformed_date)
+
+    # Proceed to process the message
+    process_message(msg, transformed_date)
+
 # Fonction pour envoyer un message
 def send_message():
     msg = EntryBox.get("1.0", tk.END).strip()
     EntryBox.delete("1.0", tk.END)
     if msg != '':
-        transformed_date = extract_date(msg)  # Extraire la date du message
-        if transformed_date is None:
-            if 'hier' in msg.lower() or 'j-1' in msg.lower() or 'hie' in msg.lower() or 'ier' in msg.lower() or 'her' in msg.lower():
-                d = datetime.now() - timedelta(days=1)
-                transformed_date = format_date(d.strftime("%d/%m/%Y"))
-            elif 'aujourd\'hui' in msg.lower() or 'aujourd hui' in msg.lower() or 'aujoud hui' in msg.lower() or 'aujord hui' in msg.lower() or 'ajourd hui' in msg.lower():
-                transformed_date = format_date(datetime.now().strftime("%d/%m/%Y"))
-            elif 'mois dernier' in msg.lower():
-                d = datetime.now() - timedelta(days=30)
-                transformed_date = format_date(d.strftime("%d/%m/%Y"))
-            elif 'semaine dernière' in msg.lower() or 'semaine derniere' in msg.lower():
-                d = datetime.now() - timedelta(days=7)
-                transformed_date = format_date(d.strftime("%d/%m/%Y"))
+        if pending_intent:
+            process_pending_input_and_intent(msg)
+        elif handle_user_input_and_special_cases:
+            handle_user_input_and_special_cases(msg)
+        else:
+            transformed_date = extract_date(msg)
+        
+        
 
         process_message(msg, transformed_date)
 
@@ -282,19 +322,33 @@ def process_message(msg, transformed_date):
     # Si la date est None, la définir sur une chaîne vide
     if date is None:
         date = ""
+        
     if "mois dernier" in lowercase_msg:
         d = datetime.now() - timedelta(days=30)
         transformed_date = format_date(d.strftime("%d/%m/%Y"))
     elif "semaine dernière" in lowercase_msg or "semaine derniere" in lowercase_msg:
         d = datetime.now() - timedelta(days=7)
         transformed_date = format_date(d.strftime("%d/%m/%Y"))
+    elif "année dérniére" in lowercase_msg or "annee derniere" in lowercase_msg:
+        d = datetime.now() - timedelta(days=365)
+        transformed_date = format_date(d.strftime("%d/%m/%Y"))
+    elif "avant hier" in lowercase_msg:
+        d= datetime.now()-timedelta(days=2) 
+        transformed_date=format_date(d.strftime("%d/%m/%Y"))  
+       
 
     if intents[0] == "recharge":
         response = get_response(intents, data, date, transformed_date)  # Obtenir la réponse en utilisant la date extraite
     elif intents[0] == "base active":
         response = get_response(intents, data, date, transformed_date)
-    else:
+    elif intents[0] == "clients":
         response = get_response(intents, data, date, transformed_date)
+    elif intents[0] == "recharge" or intents[0] == "refill" or intents[0] == "clients" or intents[0] == "ba"  :
+        # If the user provided a date with a previously pending input, process both
+        process_pending_input_and_intent(transformed_date)
+        response = get_response(intents, data, date, transformed_date)
+    else:
+        response = get_response(intents, data, date, transformed_date)    
 
     ChatBox.config(state=tk.NORMAL)
     ChatBox.insert(tk.END, "You: " + msg + "\n")  # Afficher le message original
