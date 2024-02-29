@@ -139,8 +139,6 @@ def extract_date(text):
 
         return transformed_date
 
-    return None  # Retourner None si aucune date valide n'est trouvée
-
 # Fonction pour formater la date
 def format_date(date):
     day, month, year = date.split('/')
@@ -302,9 +300,6 @@ def send_message():
             handle_user_input_and_special_cases(msg)
         else:
             transformed_date = extract_date(msg)
-        
-        
-
         process_message(msg, transformed_date)
 
 # Fonction pour traiter le message
